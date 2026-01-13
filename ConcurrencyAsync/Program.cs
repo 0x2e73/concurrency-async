@@ -9,15 +9,17 @@
 
 //TEST 1 Avec 10Ms 
 //TEST 2 avec 300ms et ça renvoie le message
-var downloadTask = DownloadAsync();
-var timeoutTask = TimeoutAsync(1000);
+var downloadTask = Task.Run(async () => await DownloadAsync());
+var timeoutTask = Task.Run(async () => await TimeoutAsync(1000));
 
 var finishedTask = await Task.WhenAny(downloadTask, timeoutTask);
 
 if (finishedTask == downloadTask)
+{
+    await downloadTask; 
     Console.WriteLine("Terminé");
-else
-    Console.WriteLine("Timeout dépassé");
+}
+else await timeoutTask;
 
 async Task DownloadAsync()
 {
